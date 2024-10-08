@@ -1,3 +1,5 @@
+import './style.css';
+
 class TodoItem {
     static id = 0;
     isComplete = false;
@@ -56,3 +58,6 @@ class ProjectList {
         this.projectList.splice(projectId,1);
     }
 }
+const ScreenController = (function(){
+
+})();
