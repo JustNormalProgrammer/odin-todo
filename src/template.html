@@ -17,12 +17,19 @@
             <button class="add-btn">Add project</button>
             <nav>
                 <ul class="project-list">
-                    <li><button>project2</button></li>
-                    <li><button>project3</button></li>
-                    <li><button>project4</button></li>
-                    <li><button>project1</button></li>
+                    <li><button class="list-btn list-btn-done">project2</button></li>
+                    <li><button class="list-btn list-btn-done">project3</button></li>
+                    <li><button class="list-btn list-btn-todo">project4</button></li>
+                    <li><button class="list-btn list-btn-todo">project1</button></li>
                 </ul>
             </nav>
+            <dialog>
+                <form action="#" class="add-form">
+                    <label for="prj-name">Project name:</label>
+                    <input type="text" name="prj-name" id="prj-name">
+                    <button type="submit">Add project</button>
+                </form>
+            </dialog>
         </div>
         <main></main>
     </div>

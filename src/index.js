@@ -25,6 +25,7 @@ class TodoItem {
 }
 class Project {
     static id = 0;
+    isDone = false;
     constructor(name){
         this.name = name;
         this.todoList = [];
@@ -41,10 +42,18 @@ class Project {
     removeTodo(todoItemIdx){
         this.todoList.splice(todoItemIdx, 1);
     }
+    getStatus(){
+        for(let todo of this.todoList){
+            if(todo.isComplete !== true) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 class ProjectList {
     constructor(){
-        this.projectList = [];
+        this.projectList = [new Project("Initial list")];
     }
     addProject(project){
         if(!project instanceof Project){
@@ -59,5 +68,41 @@ class ProjectList {
     }
 }
 const ScreenController = (function(){
+    const projects = new ProjectList();
 
+    const addBtn = document.querySelector('.add-btn');
+    const dialog = document.querySelector('dialog');
+    const form = document.querySelector('.add-form')
+    addBtn.addEventListener('click', ()=>{
+        dialog.showModal();
+        form.addEventListener('submit', (e)=>{
+            e.preventDefault();
+            const input = document.querySelector('#prj-name')
+            let prjName = input.value;
+            const project = new Project(prjName);
+            dialog.close();
+        })
+    })
+
+
+    
+    function createProjectCard(project){
+        const li = document.createElement('li');
+        const button = document.createElement('button');
+        button.addEventListener('click', () => {
+            console.log('test')
+        });
+        button.classList.add('list-btn');
+        project.getStatus ? button.classList.add('list-btn-done') : button.classList.add('list-btn-todo')
+        button.textContent = project.name;
+        li.appendChild(button);
+        return li;
+    }
+    function displayProjects(){
+        const ul = document.querySelector('.project-list');
+        for(let project of projects){
+            const card = createProjectCard(project);
+            ul.appendChild(card);
+        }
+    }
 })();

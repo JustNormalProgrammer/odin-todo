@@ -25,7 +25,7 @@ h1{
     width: 70px;
 }
 .add-btn{
-    height: 40px;
+    height: 50px;
     font-size: 1.3rem;
     background-color: #2fa048;
     color: #FAF9F6;
@@ -45,13 +45,12 @@ h1{
     background-color: #364958;
     color:#FAF9F6;
 }
-.project-list button{
+.list-btn{
     box-sizing: border-box;
     width: 100%;
     text-align: center;
     margin-top: 20px;
-    border: 1px solid black;
-    border-bottom: 6px solid #2fa048;
+    border: 1px solid black; 
     padding: 20px;
     border-radius: 8px;
     font-size: 1.4rem;
@@ -59,6 +58,21 @@ h1{
     color:#FAF9F6;
     transition: transform ease .5s;
 }
+.list-btn-done{
+    border-bottom: 6px solid #2fa048;
+}
+.list-btn-todo{
+    border-bottom: 6px solid #c50a0a;
+}
 .project-list button:hover{
     transform: translateY(-5px);
+}
+.add-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+#prj-name{
+    padding: 20px;
 }
