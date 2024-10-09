@@ -4,18 +4,17 @@ import './style.css';
 class TodoItem {
     static id = 0;
     isComplete = false;
-    constructor(title, desc,dueDate,priority,notes){
+    constructor(title, desc,dueDate,priority){
         this.id = TodoItem.id++;
         this.title = title;
         this.desc = desc;
         this.dueDate = dueDate;
         this.priority = priority; 
-        this.notes = notes;
     }
     switchStatus(){
         this.isComplete = !this.isComplete;
     }
-    edit(title, desc,dueDate,priority,notes){
+    edit(title, desc,dueDate,priority){
         this.title = title;
         this.desc = desc;
         this.dueDate = dueDate;
@@ -80,12 +79,45 @@ function seedHelper(){
     }
     console.log(projects);
 }
+const todoController = (function(){
+    function createTodoCard(todo){
+        
+        const card = document.createElement('div');
+        card.classList.add('todo-item');
+        const checkbox = document.createElement('input');
+        checkbox.type = "checkbox";
+        checkbox.name = "isDone";
+        checkbox.id = "isDone";
+        const divInfo = document.createElement('div');
+        divInfo.classList.add('todo-info');
+        const divHeader = document.createElement('div');
+        divHeader.textContent = todo.title;
+        divHeader.classList.add('todo-header')
+        const divDesc = document.createElement('div');
+        divDesc.textContent = todo.desc;
+        divDesc.classList.add('todo-desc')
+        divInfo.appendChild(divHeader);
+        divInfo.appendChild(divDesc);
+        const divDate = document.createElement('div');
+        const divPriority = document.createElement('div');
+        divDate.textContent = todo.dueDate;
+        divPriority.textContent = todo.priority;
+        divDate.classList.add('todo-info-last');
+        divPriority.classList.add('todo-info-last');
+        card.appendChild(checkbox);
+        card.appendChild(divInfo);
+        card.appendChild(divDate);
+        card.appendChild(divPriority);
+        return card;
+    }
+    return {createTodoCard};
+})();
 const projectDisplayController = (function(){
-
     const addBtn = document.querySelector('.add-btn');
     const dialog = document.querySelector('dialog');
     const form = document.querySelector('.add-form')
     const ul = document.querySelector('.project-list');
+    const projectHeader = document.querySelector('.project-header')
     function addEventListeners() {
         addBtn.addEventListener('click', ()=>{
             dialog.showModal();
@@ -104,8 +136,15 @@ const projectDisplayController = (function(){
     function createProjectCard(project){
         const li = document.createElement('li');
         const button = document.createElement('button');
+        const todoDisplayed = document.querySelector('.todo-list');
         button.addEventListener('click', () => {
-            console.log('test')
+            displayActiveProject(project);
+            while(todoDisplayed.firstChild){
+                todoDisplayed.removeChild(todoDisplayed.firstChild);
+            }
+            for(let todo of project.todoList){
+                todoDisplayed.appendChild(todoController.createTodoCard(todo));
+            }
         });
         button.classList.add('list-btn');
         project.getStatus ? button.classList.add('list-btn-done') : button.classList.add('list-btn-todo')
@@ -113,9 +152,18 @@ const projectDisplayController = (function(){
         li.appendChild(button);
         return li;
     }
+    function displayActiveProject(project){
+        displayActvProjectHeader(project);
+    }
+    function displayActvProjectHeader(project){
+        projectHeader.textContent = project.name;
+    }
     function displayProjects(){
         while(ul.firstChild){
             ul.removeChild(ul.firstChild);
+        }
+        if(projects.projectList[0]) {
+            displayActiveProject(projects.projectList[0])
         }
         for(let project of projects.projectList){
             const card = createProjectCard(project);
@@ -125,6 +173,7 @@ const projectDisplayController = (function(){
     addEventListeners();
     return {displayProjects};
 })();
+
 const ScreenController = (function(){
     const projectDisplay = projectDisplayController;
     seedHelper();

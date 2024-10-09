@@ -48,7 +48,7 @@ h1{
     background-color: #364958;
     color:#FAF9F6;
 }
-.list-btn{
+.list-btn {
     box-sizing: border-box;
     width: 100%;
     text-align: center;
@@ -70,6 +70,7 @@ h1{
 .project-list button:hover{
     transform: translateY(-5px);
 }
+
 .add-form{
     display: flex;
     flex-direction: column;
@@ -129,3 +130,49 @@ button[type="submit"]{
 button[type="submit"]:hover{
     filter: brightness(75%)
 }
+main{
+    display: grid;
+    grid-template-rows: 1fr 10fr;
+}
+.project-header{
+    display: flex;
+    background-color: #364958;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color:#FAF9F6;
+}
+.todo-list{
+    padding: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+}
+.todo-item{
+    background-color: #EDDDD4;
+    display: flex;
+    align-items: center;
+    width: 1100px;
+    gap: 20px;
+    padding: 10px;
+    border-radius: 8px;
+}
+.todo-info{
+    margin-right: auto;
+}
+.todo-header{
+    font-size: 1.8rem;
+    margin: 0;
+}
+.todo-desc{
+    font-size: 1.4rem;
+}
+.todo-info-last{
+    font-size: 1.4rem
+}
+input[type="checkbox"]{
+    width: 25px;
+    height: 25px;
+}
+
