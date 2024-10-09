@@ -85,16 +85,22 @@ const projectDisplayController = (function(){
     const addBtn = document.querySelector('.add-btn');
     const dialog = document.querySelector('dialog');
     const form = document.querySelector('.add-form')
-    addBtn.addEventListener('click', ()=>{
-        dialog.showModal();
+    const ul = document.querySelector('.project-list');
+    function addEventListeners() {
+        addBtn.addEventListener('click', ()=>{
+            dialog.showModal();
+        })
         form.addEventListener('submit', (e)=>{
             e.preventDefault();
             const input = document.querySelector('#prj-name')
             let prjName = input.value;
             const project = new Project(prjName);
+            projects.addProject(project);
+            ul.appendChild(createProjectCard(project));
+            input.value = '';
             dialog.close();
         })
-    })
+    }
     function createProjectCard(project){
         const li = document.createElement('li');
         const button = document.createElement('button');
@@ -108,12 +114,15 @@ const projectDisplayController = (function(){
         return li;
     }
     function displayProjects(){
-        const ul = document.querySelector('.project-list');
+        while(ul.firstChild){
+            ul.removeChild(ul.firstChild);
+        }
         for(let project of projects.projectList){
             const card = createProjectCard(project);
             ul.appendChild(card);
         }
     }
+    addEventListeners();
     return {displayProjects};
 })();
 const ScreenController = (function(){

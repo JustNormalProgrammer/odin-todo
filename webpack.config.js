@@ -1,6 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 module.exports = {
     mode: 'development',
     entry: './src/index.js',
@@ -34,4 +34,10 @@ module.exports = {
             },
         ],
     },
+    optimization: {
+        minimizer: [
+          new CssMinimizerPlugin(),
+        ],
+        minimize: true,
+      },
 };

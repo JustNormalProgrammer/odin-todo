@@ -12,6 +12,7 @@
   "version": "1.0.0",
   "main": "webpack.config.js",
   "devDependencies": {
+    "css-minimizer-webpack-plugin": "^7.0.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.6.0",
     "webpack-dev-server": "^5.1.0"
