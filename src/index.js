@@ -1,5 +1,6 @@
 import './style.css';
 
+
 class TodoItem {
     static id = 0;
     isComplete = false;
@@ -67,8 +68,19 @@ class ProjectList {
         this.projectList.splice(projectId,1);
     }
 }
-const ScreenController = (function(){
-    const projects = new ProjectList();
+const projects = new ProjectList();
+function seedHelper(){
+    for(let i = 0; i < 5; i++){
+        let project = new Project(`Project ${i}`);
+        for(let j = 0; j < 5; j++){
+            let todo = new TodoItem(`Title:${i}`,`Description:${i}`, Date.now(), i, "notes!");
+            project.addTodo(todo);
+        }
+        projects.addProject(project); 
+    }
+    console.log(projects);
+}
+const projectDisplayController = (function(){
 
     const addBtn = document.querySelector('.add-btn');
     const dialog = document.querySelector('dialog');
@@ -83,9 +95,6 @@ const ScreenController = (function(){
             dialog.close();
         })
     })
-
-
-    
     function createProjectCard(project){
         const li = document.createElement('li');
         const button = document.createElement('button');
@@ -100,9 +109,15 @@ const ScreenController = (function(){
     }
     function displayProjects(){
         const ul = document.querySelector('.project-list');
-        for(let project of projects){
+        for(let project of projects.projectList){
             const card = createProjectCard(project);
             ul.appendChild(card);
         }
     }
+    return {displayProjects};
+})();
+const ScreenController = (function(){
+    const projectDisplay = projectDisplayController;
+    seedHelper();
+    projectDisplay.displayProjects();
 })();
