@@ -19,34 +19,55 @@
                 <ul class="project-list">
                 </ul>
             </nav>
-            <dialog>
+            <dialog id="project-dialog">
                 <div class="dialog-header">
                     <img src="assets/checklist-svgrepo-com.svg" alt="New project icon">
                     <div class="header-text">
                         Add a new project!
                     </div>
                 </div>
-                <form action="#" class="add-form">
+                <form action="#" class="add-form" id="project-form">
                     <label for="prj-name">Project name:</label>
-                    <input type="text" name="prj-name" id="prj-name">
-                    <button type="submit">Add project</button>
+                    <input type="text" name="prj-name" id="prj-name" required>
                 </form>
+                <button type="submit" form="project-form">Add project</button>
+            </dialog>
+            <dialog id="todo-dialog">
+                <div class="dialog-header">
+                    <div class="header-text">
+                        Add new item to the list!
+                    </div>
+                </div>
+                <form action="#" class="add-form" id="todo-form">
+                    <label for="todo-name">Title:</label>
+                    <input type="text" name="todo-name" id="todo-name">
+                    <label for="todo-desc">Description:</label>
+                    <input type="text" name="todo-desc" id="todo-desc">
+                    <label for="todo-dueDate">Date:</label>
+                    <input type="date" name="todo-dueDate" id="todo-dueDate">
+                    <fieldset>
+                        <legend>Select priority:</legend>
+                        <div class="radio-group">
+                            <label for="priority-1">1
+                                <input type="radio" name="todo-priority" id="priority-1">
+                            </label>
+                            <label for="priority-2">2
+                                <input type="radio" name="todo-priority" id="priority-2">
+                            </label>
+                            <label for="priority-3">3
+                                <input type="radio" name="todo-priority" id="priority-3">
+                            </label>
+                        </div>
+                    </fieldset>
+                </form>
+                <button type="submit" form="todo-form">Add project</button>
             </dialog>
         </div>
         <main>
             <div class="project-header">
             </div>
             <div class="todo-list">
-                <div class="todo-item">
-                    <input type="checkbox" name="isDone" id="isDone">
-                    <div class="todo-info">
-                        <div class="todo-header">Todo Item</div>
-                        <div class="todo-desc">Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto  </div>
-                    </div>
-                    <div class="todo-info-last">2022-04-15</div>
-                    <div class="todo-info-last">3</div> 
-                </div>
-                
+
             </div>
         </main>
     </div>
