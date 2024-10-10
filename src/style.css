@@ -189,6 +189,9 @@ main{
 .todo-info-last{
     font-size: 1.4rem
 }
+.todo-priority{
+    width: 25px;
+}
 input[type="checkbox"]{
     width: 25px;
     height: 25px;
