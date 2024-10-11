@@ -158,6 +158,7 @@ const ScreenController = (function () {
         checkbox.addEventListener('click', () => {
             todo.switchStatus();
             card.classList.toggle('todo-item-darken');
+            displayProjectStatus(activeProject);
         })
         const divInfo = document.createElement('div');
         divInfo.classList.add('todo-info');
@@ -227,20 +228,26 @@ const ScreenController = (function () {
         main.appendChild(addButton);
         main.appendChild(delButton);
     }
-    
+    function displayProjectStatus(project){
+        const projectButton = document.querySelector(`[data-id = "${project.id}"]`);
+        let isDone = project.getStatus();
+        projectButton.classList.remove('list-btn-done', 'list-btn-todo');
+        isDone ? projectButton.classList.add('list-btn-done') : projectButton.classList.add('list-btn-todo');
+    }
     function createProjectCard(project) {
         const li = document.createElement('li');
         const button = document.createElement('button');
+        button.dataset.id = project.id;
 
         button.addEventListener('click', () => {
             activeProject = project;
             displayActiveProject();
         });
         button.classList.add('list-btn');
-        project.getStatus ? button.classList.add('list-btn-done') : button.classList.add('list-btn-todo');
         button.textContent = project.name;
         li.appendChild(button);
-        return li;
+        ul.appendChild(li);
+        displayProjectStatus(project);
     }
     function displayActiveProject() {
         resetTodo();
@@ -254,7 +261,6 @@ const ScreenController = (function () {
         while (todoDisplayed.firstChild) {
             todoDisplayed.removeChild(todoDisplayed.firstChild);
         }
-        
         projectHeader.textContent = '';
     }
     function hideButtons(){
@@ -278,8 +284,7 @@ const ScreenController = (function () {
             return;   
         }
         for (let project of projects.projectList) {
-            const card = createProjectCard(project);
-            ul.appendChild(card);
+            createProjectCard(project);
         }
     }
 })();
