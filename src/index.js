@@ -43,8 +43,10 @@ class Project {
         this.todoList.push(todoItem);
         return 1;
     }
-    removeTodo(todoItemIdx) {
-        this.todoList.splice(todoItemIdx, 1);
+    removeTodo(todoItem) {
+        console.log(this.todoList);
+        this.todoList.splice(this.todoList.indexOf(todoItem), 1);
+        console.log(this.todoList);
     }
     getStatus() {
         for (let todo of this.todoList) {
@@ -70,8 +72,8 @@ class ProjectList {
         this.projectList.splice(projectId, 1);
     }
 }
-const projects = new ProjectList();
-function seedHelper() {
+
+function seedHelper(projects) {
     for (let i = 0; i < 5; i++) {
         let project = new Project(`Project ${i}`);
         for (let j = 0; j < 5; j++) {
@@ -81,9 +83,38 @@ function seedHelper() {
         projects.addProject(project);
     }
 }
-const todoController = (function () {
-    const dialog = document.querySelector('#todo-dialog');
+
+
+const ScreenController = (function () {
+    const formTodo = document.querySelector('#todo-form');
+    const dialogTodo = document.querySelector('#todo-dialog');
     const main = document.querySelector('main');
+    const addBtn = document.querySelector('.add-btn');
+    const dialog = document.querySelector('#project-dialog');
+    const formProject = document.querySelector('#project-form');
+    const ul = document.querySelector('.project-list');
+    const projectHeader = document.querySelector('.project-header');
+
+    
+    
+    let activeProject = null;
+    const projects = new ProjectList();
+
+    seedHelper(projects);
+    displayProjects();
+    
+    formTodo.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.querySelector('#todo-title').value;
+        const desc = document.querySelector('#todo-desc').value;
+        const date = document.querySelector('#todo-dueDate').valueAsDate;
+        const priority = document.querySelector('input[name="todo-priority"]:checked').value;
+        const todo = new TodoItem(title,desc,date,priority);
+        formTodo.reset();
+        activeProject.addTodo(todo);
+        displayActiveProject();
+        dialogTodo.close();
+    })
 
     function createTodoCard(todo) {
         const card = document.createElement('div');
@@ -94,6 +125,9 @@ const todoController = (function () {
         checkbox.type = "checkbox";
         checkbox.name = "isDone";
         checkbox.id = "isDone";
+        checkbox.addEventListener('click', () => {
+            todo.switchStatus();
+        })
         const divInfo = document.createElement('div');
         divInfo.classList.add('todo-info');
         const divHeader = document.createElement('div');
@@ -118,16 +152,18 @@ const todoController = (function () {
         const btnGroup = document.createElement('div');
         const delBtn = document.createElement('button');
         const editBtn = document.createElement('button');
-        editBtn.dataset.id = todo.id;
-        delBtn.dataset.id = todo.id;
+        delBtn.addEventListener('click', ()=> {
+            activeProject.removeTodo(todo);
+            displayActiveProject();
+        })
         const delBtnInner = document.createElement('img');
         const editBtnInner = document.createElement('img');
         delBtnInner.src = deleteBtnImg;
         editBtnInner.src = editBtnImg;
         delBtn.appendChild(delBtnInner);
         editBtn.appendChild(editBtnInner);
-        btnGroup.appendChild(delBtn);
         btnGroup.appendChild(editBtn);
+        btnGroup.appendChild(delBtn);
         btnGroup.classList.add('card-btn-group')        
         cardWrapper.appendChild(card);
         cardWrapper.appendChild(btnGroup);
@@ -142,24 +178,11 @@ const todoController = (function () {
         img.src= addBtnImg;
         button.appendChild(img);
         button.addEventListener('click', ()=>{
-            dialog.showModal();
+            dialogTodo.showModal();
         })
         main.appendChild(button);
     }
-    return { createTodoCard, createAddTodoButton};
-})();
-
-const projectDisplayController = (function () {
-    const addBtn = document.querySelector('.add-btn');
-    const dialog = document.querySelector('#project-dialog');
-    const formProject = document.querySelector('#project-form');
-    const ul = document.querySelector('.project-list');
-    const projectHeader = document.querySelector('.project-header');
-
-    let activeProject = null;
-    function getActiveProject() {
-        return activeProject;
-    }
+    
     addBtn.addEventListener('click', () => {
         dialog.showModal();
     })
@@ -195,9 +218,9 @@ const projectDisplayController = (function () {
             todoDisplayed.removeChild(todoDisplayed.firstChild);
         }
         for (let todo of activeProject.todoList) {
-            todoDisplayed.appendChild(todoController.createTodoCard(todo));
+            todoDisplayed.appendChild(createTodoCard(todo));
         }
-        todoController.createAddTodoButton();
+        createAddTodoButton();
     }
     
     function displayActiveProjectHeader() {
@@ -216,28 +239,4 @@ const projectDisplayController = (function () {
             ul.appendChild(card);
         }
     }
-    return { displayProjects, getActiveProject, displayActiveProject};
-})();
-
-const ScreenController = (function () {
-    const projectDisplay = projectDisplayController;
-    const formTodo = document.querySelector('#todo-form');
-    const dialog = document.querySelector('#todo-dialog');
-    seedHelper();
-    projectDisplay.displayProjects();
-
-    formTodo.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const title = document.querySelector('#todo-title').value;
-        const desc = document.querySelector('#todo-desc').value;
-        const date = document.querySelector('#todo-dueDate').valueAsDate;
-        const priority = document.querySelector('input[name="todo-priority"]:checked').value;
-        const todo = new TodoItem(title,desc,date,priority);
-        formTodo.reset();
-        let project = projectDisplay.getActiveProject();
-        project.addTodo(todo);
-        projectDisplay.displayActiveProject();
-        dialog.close();
-    })
-
 })();
