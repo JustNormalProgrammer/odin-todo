@@ -113,7 +113,7 @@ const ScreenController = (function () {
         let prjName = input.value;
         const project = new Project(prjName);
         projects.addProject(project);
-        ul.appendChild(createProjectCard(project));
+        createProjectCard(project);
         formProject.reset();    
         dialog.close();
     })
@@ -128,6 +128,7 @@ const ScreenController = (function () {
         formTodo.reset();
         activeProject.addTodo(todo);
         displayActiveProject();
+        displayProjectStatus(activeProject);
         dialogTodo.close();
     })
     formEdit.addEventListener('submit', (e) => {
