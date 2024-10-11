@@ -66,8 +66,8 @@ class ProjectList {
         this.projectList.push(project);
         return 1;
     }
-    remove(projectId) {
-        this.projectList.splice(projectId, 1);
+    remove(project) {
+        this.projectList.splice(this.projectList.indexOf(project), 1);
     }
 }
 
@@ -87,14 +87,14 @@ const ScreenController = (function () {
     const formTodo = document.querySelector('#todo-form');
     const dialogTodo = document.querySelector('#todo-dialog');
     const main = document.querySelector('main');
-    const addBtn = document.querySelector('.add-btn');
+    const addBtn = document.querySelector('#add-btn');
     const dialog = document.querySelector('#project-dialog');
     const formProject = document.querySelector('#project-form');
     const dialogEdit = document.querySelector('#edit-dialog');
     const formEdit = document.querySelector('#edit-form');
     const ul = document.querySelector('.project-list');
     const projectHeader = document.querySelector('.project-header');
-
+    const todoDisplayed = document.querySelector('.todo-list');
     
     
     let activeProject = null;
@@ -103,6 +103,20 @@ const ScreenController = (function () {
 
     seedHelper(projects);
     displayProjects();
+
+    addBtn.addEventListener('click', () => {
+        dialog.showModal();
+    })
+    formProject.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = document.querySelector('#prj-name')
+        let prjName = input.value;
+        const project = new Project(prjName);
+        projects.addProject(project);
+        ul.appendChild(createProjectCard(project));
+        formProject.reset();    
+        dialog.close();
+    })
     
     formTodo.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -123,6 +137,7 @@ const ScreenController = (function () {
         const date = document.querySelector('#edit-dueDate').valueAsDate;
         const priority = document.querySelector('input[name="edit-priority"]:checked').value;
         activeTodo.edit(title, desc,date,priority);
+        formEdit.reset();
         displayActiveProject();
         dialogEdit.close();
     })
@@ -198,20 +213,6 @@ const ScreenController = (function () {
         main.appendChild(button);
     }
     
-    addBtn.addEventListener('click', () => {
-        dialog.showModal();
-    })
-    formProject.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = document.querySelector('#prj-name')
-        let prjName = input.value;
-        const project = new Project(prjName);
-        projects.addProject(project);
-        ul.appendChild(createProjectCard(project));
-        formProject.reset();    
-        dialog.close();
-    })
-    
     function createProjectCard(project) {
         const li = document.createElement('li');
         const button = document.createElement('button');
@@ -227,27 +228,40 @@ const ScreenController = (function () {
         return li;
     }
     function displayActiveProject() {
-        const todoDisplayed = document.querySelector('.todo-list');
-        displayActiveProjectHeader();
-        while (todoDisplayed.firstChild) {
-            todoDisplayed.removeChild(todoDisplayed.firstChild);
-        }
+        
+        resetTodo();
+        projectHeader.textContent = activeProject.name;
         for (let todo of activeProject.todoList) {
             todoDisplayed.appendChild(createTodoCard(todo));
         }
+        const button = document.createElement('button');
+        button.textContent = "Delete project"
+        button.classList.add('main-btn', 'del-btn');
+        todoDisplayed.appendChild(button);
+        button.addEventListener('click', () => {
+            projects.remove(activeProject);
+            displayProjects();
+        })
         createAddTodoButton();
     }
-    
-    function displayActiveProjectHeader() {
-        projectHeader.textContent = activeProject.name;
+    function resetTodo(){
+        while (todoDisplayed.firstChild) {
+            todoDisplayed.removeChild(todoDisplayed.firstChild);
+        }
+        projectHeader.textContent = '';
     }
+    
     function displayProjects() {
         while (ul.firstChild) {
             ul.removeChild(ul.firstChild);
         }
-        if (projects.projectList[1]) {
-            activeProject = projects.projectList[1];
-            displayActiveProject()
+        if (projects.projectList[0]) {
+            activeProject = projects.projectList[0];
+            displayActiveProject();
+        }
+        if(projects.projectList.length === 0) {
+            resetTodo();
+            return;   
         }
         for (let project of projects.projectList) {
             const card = createProjectCard(project);
