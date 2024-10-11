@@ -151,8 +151,13 @@ const ScreenController = (function () {
         checkbox.type = "checkbox";
         checkbox.name = "isDone";
         checkbox.id = "isDone";
+        if(todo.isComplete) {
+            card.classList.toggle('todo-item-darken');
+            checkbox.checked = true;
+        }
         checkbox.addEventListener('click', () => {
             todo.switchStatus();
+            card.classList.toggle('todo-item-darken');
         })
         const divInfo = document.createElement('div');
         divInfo.classList.add('todo-info');
@@ -161,7 +166,7 @@ const ScreenController = (function () {
         divHeader.classList.add('todo-header')
         const divDesc = document.createElement('div');
         divDesc.textContent = todo.desc;
-        divDesc.classList.add('todo-desc')
+        divDesc.classList.add('todo-desc');
         divInfo.appendChild(divHeader);
         divInfo.appendChild(divDesc);
         const divDate = document.createElement('div');
@@ -200,17 +205,27 @@ const ScreenController = (function () {
         return cardWrapper;
     }
     
-    function createAddTodoButton(){
+    function createAddTodoAndDeleteProjectButton(){
         if(document.querySelector('.add-todo-btn')) return;
-        const button = document.createElement('button');
-        button.classList.add('add-todo-btn');
-        const img = document.createElement('img');
-        img.src= addBtnImg;
-        button.appendChild(img);
-        button.addEventListener('click', ()=>{
+        const addButton = document.createElement('button');
+        const delButton = document.createElement('button');
+        addButton.classList.add('add-todo-btn');
+        delButton.classList.add('del-btn');
+        const imgDel = document.createElement('img');
+        const imgAdd = document.createElement('img');
+        imgDel.src = deleteBtnImg;
+        imgAdd.src= addBtnImg;
+        addButton.appendChild(imgAdd);
+        delButton.appendChild(imgDel);
+        addButton.addEventListener('click', ()=>{
             dialogTodo.showModal();
         })
-        main.appendChild(button);
+        delButton.addEventListener('click', () => {
+            projects.remove(activeProject);
+            displayProjects();
+        })
+        main.appendChild(addButton);
+        main.appendChild(delButton);
     }
     
     function createProjectCard(project) {
@@ -228,27 +243,25 @@ const ScreenController = (function () {
         return li;
     }
     function displayActiveProject() {
-        
         resetTodo();
         projectHeader.textContent = activeProject.name;
         for (let todo of activeProject.todoList) {
             todoDisplayed.appendChild(createTodoCard(todo));
         }
-        const button = document.createElement('button');
-        button.textContent = "Delete project"
-        button.classList.add('main-btn', 'del-btn');
-        todoDisplayed.appendChild(button);
-        button.addEventListener('click', () => {
-            projects.remove(activeProject);
-            displayProjects();
-        })
-        createAddTodoButton();
+        createAddTodoAndDeleteProjectButton();
     }
     function resetTodo(){
         while (todoDisplayed.firstChild) {
             todoDisplayed.removeChild(todoDisplayed.firstChild);
         }
+        
         projectHeader.textContent = '';
+    }
+    function hideButtons(){
+        const delBtn = document.querySelector('.del-btn');
+        const addButton = document.querySelector('.add-todo-btn');
+        main.removeChild(addButton);
+        main.removeChild(delBtn);
     }
     
     function displayProjects() {
@@ -260,6 +273,7 @@ const ScreenController = (function () {
             displayActiveProject();
         }
         if(projects.projectList.length === 0) {
+            hideButtons();
             resetTodo();
             return;   
         }
