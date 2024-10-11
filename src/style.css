@@ -70,12 +70,12 @@ h1{
 .project-list button:hover{
     transform: translateY(-5px);
 }
-#todo-form label{
+.add-form label{
     display: flex;
     align-items: center;
     justify-content: center;
 }
-#todo-form fieldset{
+.add-form fieldset{
     width: 100%;
     box-sizing: border-box;
 }

@@ -39,7 +39,7 @@
                     </div>
                 </div>
                 <form action="#" class="add-form" id="todo-form">
-                    <label for="todo-name">Title:</label>
+                    <label for="todo-title">Title:</label>
                     <input type="text" name="todo-title" id="todo-title">
                     <label for="todo-desc">Description:</label>
                     <input type="text" name="todo-desc" id="todo-desc">
@@ -60,7 +60,37 @@
                         </div>
                     </fieldset>
                 </form>
-                <button type="submit" form="todo-form">Add project</button>
+                <button type="submit" form="todo-form">Add todo</button>
+            </dialog>
+            <dialog id="edit-dialog">
+                <div class="dialog-header">
+                    <div class="header-text">
+                        Edit item
+                    </div>
+                </div>
+                <form action="#" class="add-form" id="edit-form">
+                    <label for="edit-title">Title:</label>
+                    <input type="text" name="edit-title" id="edit-title">
+                    <label for="edit-edit">Description:</label>
+                    <input type="text" name="edit-desc" id="edit-desc">
+                    <label for="edit-dueDate">Date:</label>
+                    <input type="date" name="edit-dueDate" id="edit-dueDate">
+                    <fieldset>
+                        <legend>Select priority:</legend>
+                        <div class="radio-group">
+                            <label for="priority-1">1
+                                <input type="radio" name="edit-priority" id="edit-priority-1" value="1" required>
+                            </label>
+                            <label for="priority-2">2
+                                <input type="radio" name="edit-priority" id="edit-priority-2" value="2">
+                            </label>
+                            <label for="priority-3">3
+                                <input type="radio" name="edit-priority" id="edit-priority-3" value="3">
+                            </label>
+                        </div>
+                    </fieldset>
+                </form>
+                <button type="submit" form="edit-form">Edit item</button>
             </dialog>
         </div>
         <main>

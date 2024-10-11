@@ -24,7 +24,6 @@ class TodoItem {
         this.desc = desc;
         this.dueDate = dueDate;
         this.priority = priority;
-        this.notes = notes;
     }
 }
 class Project {
@@ -43,10 +42,9 @@ class Project {
         this.todoList.push(todoItem);
         return 1;
     }
+    
     removeTodo(todoItem) {
-        console.log(this.todoList);
         this.todoList.splice(this.todoList.indexOf(todoItem), 1);
-        console.log(this.todoList);
     }
     getStatus() {
         for (let todo of this.todoList) {
@@ -92,12 +90,15 @@ const ScreenController = (function () {
     const addBtn = document.querySelector('.add-btn');
     const dialog = document.querySelector('#project-dialog');
     const formProject = document.querySelector('#project-form');
+    const dialogEdit = document.querySelector('#edit-dialog');
+    const formEdit = document.querySelector('#edit-form');
     const ul = document.querySelector('.project-list');
     const projectHeader = document.querySelector('.project-header');
 
     
     
     let activeProject = null;
+    let activeTodo = null;
     const projects = new ProjectList();
 
     seedHelper(projects);
@@ -114,6 +115,16 @@ const ScreenController = (function () {
         activeProject.addTodo(todo);
         displayActiveProject();
         dialogTodo.close();
+    })
+    formEdit.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.querySelector('#edit-title').value;
+        const desc = document.querySelector('#edit-desc').value;
+        const date = document.querySelector('#edit-dueDate').valueAsDate;
+        const priority = document.querySelector('input[name="edit-priority"]:checked').value;
+        activeTodo.edit(title, desc,date,priority);
+        displayActiveProject();
+        dialogEdit.close();
     })
 
     function createTodoCard(todo) {
@@ -152,10 +163,14 @@ const ScreenController = (function () {
         const btnGroup = document.createElement('div');
         const delBtn = document.createElement('button');
         const editBtn = document.createElement('button');
-        delBtn.addEventListener('click', ()=> {
+        delBtn.addEventListener('click', () => {
             activeProject.removeTodo(todo);
             displayActiveProject();
-        })
+        });
+        editBtn.addEventListener('click', () => {
+            activeTodo = todo;
+            dialogEdit.showModal();
+        });
         const delBtnInner = document.createElement('img');
         const editBtnInner = document.createElement('img');
         delBtnInner.src = deleteBtnImg;
