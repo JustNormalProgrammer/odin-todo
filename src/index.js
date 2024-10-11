@@ -4,7 +4,8 @@ import addBtnImg from './assets/add-ellipse-svgrepo-com.svg'
 import greenCircle from './assets/priority/green-circle-svgrepo-com.svg'
 import yellowCircle from './assets/priority/yellow-circle-svgrepo-com.svg'
 import redCircle from './assets/priority/red-circle-svgrepo-com.svg'
-
+import deleteBtnImg from './assets/delete-3-svgrepo-com.svg'
+import editBtnImg from './assets/edit-svgrepo-com.svg'
 class TodoItem {
     static id = 0;
     isComplete = false;
@@ -81,12 +82,13 @@ function seedHelper() {
     }
 }
 const todoController = (function () {
-
-    
     const dialog = document.querySelector('#todo-dialog');
-    
+    const main = document.querySelector('main');
+
     function createTodoCard(todo) {
         const card = document.createElement('div');
+        const cardWrapper = document.createElement('div');
+        cardWrapper.classList.add('card-wrapper');
         card.classList.add('todo-item');
         const checkbox = document.createElement('input');
         checkbox.type = "checkbox";
@@ -113,10 +115,27 @@ const todoController = (function () {
         card.appendChild(divInfo);
         card.appendChild(divDate);
         card.appendChild(priority);
-        return card;
+        const btnGroup = document.createElement('div');
+        const delBtn = document.createElement('button');
+        const editBtn = document.createElement('button');
+        editBtn.dataset.id = todo.id;
+        delBtn.dataset.id = todo.id;
+        const delBtnInner = document.createElement('img');
+        const editBtnInner = document.createElement('img');
+        delBtnInner.src = deleteBtnImg;
+        editBtnInner.src = editBtnImg;
+        delBtn.appendChild(delBtnInner);
+        editBtn.appendChild(editBtnInner);
+        btnGroup.appendChild(delBtn);
+        btnGroup.appendChild(editBtn);
+        btnGroup.classList.add('card-btn-group')        
+        cardWrapper.appendChild(card);
+        cardWrapper.appendChild(btnGroup);
+        return cardWrapper;
     }
     
     function createAddTodoButton(){
+        if(document.querySelector('.add-todo-btn')) return;
         const button = document.createElement('button');
         button.classList.add('add-todo-btn');
         const img = document.createElement('img');
@@ -125,7 +144,7 @@ const todoController = (function () {
         button.addEventListener('click', ()=>{
             dialog.showModal();
         })
-        return button;
+        main.appendChild(button);
     }
     return { createTodoCard, createAddTodoButton};
 })();
@@ -136,7 +155,6 @@ const projectDisplayController = (function () {
     const formProject = document.querySelector('#project-form');
     const ul = document.querySelector('.project-list');
     const projectHeader = document.querySelector('.project-header');
-    const main = document.querySelector('main');
 
     let activeProject = null;
     function getActiveProject() {
@@ -162,7 +180,7 @@ const projectDisplayController = (function () {
 
         button.addEventListener('click', () => {
             activeProject = project;
-            displayActiveProject(project);
+            displayActiveProject();
         });
         button.classList.add('list-btn');
         project.getStatus ? button.classList.add('list-btn-done') : button.classList.add('list-btn-todo');
@@ -179,7 +197,7 @@ const projectDisplayController = (function () {
         for (let todo of activeProject.todoList) {
             todoDisplayed.appendChild(todoController.createTodoCard(todo));
         }
-        main.appendChild(todoController.createAddTodoButton());
+        todoController.createAddTodoButton();
     }
     
     function displayActiveProjectHeader() {
@@ -189,8 +207,8 @@ const projectDisplayController = (function () {
         while (ul.firstChild) {
             ul.removeChild(ul.firstChild);
         }
-        if (projects.projectList[0]) {
-            activeProject = projects.projectList[0];
+        if (projects.projectList[1]) {
+            activeProject = projects.projectList[1];
             displayActiveProject()
         }
         for (let project of projects.projectList) {

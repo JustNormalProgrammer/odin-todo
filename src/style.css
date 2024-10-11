@@ -217,3 +217,16 @@ input[type="checkbox"]{
 .add-todo-btn img{
     width: 50px;
 }
+.card-wrapper{
+    display: flex;
+    align-items: center;
+}
+.card-btn-group button{
+    width: min-content;
+    border: none;
+    background-color: white;
+    padding: 10px;
+}
+.card-btn-group button img{
+    width: 50px;
+}
