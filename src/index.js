@@ -6,15 +6,21 @@ import yellowCircle from './assets/priority/yellow-circle-svgrepo-com.svg'
 import redCircle from './assets/priority/red-circle-svgrepo-com.svg'
 import deleteBtnImg from './assets/delete-3-svgrepo-com.svg'
 import editBtnImg from './assets/edit-svgrepo-com.svg'
+
+localStorage.clear();
 class TodoItem {
     static id = 0;
     isComplete = false;
-    constructor(title, desc, dueDate, priority) {
+    constructor(title, desc, dueDate, priority, id, isComplete) {
         this.id = TodoItem.id++;
         this.title = title;
         this.desc = desc;
         this.dueDate = dueDate;
         this.priority = priority;
+        if(id !== undefined){
+            this.id = id;
+            this.isComplete = isComplete;
+        }
     }
     switchStatus() {
         this.isComplete = !this.isComplete;
@@ -29,10 +35,15 @@ class TodoItem {
 class Project {
     static id = 0;
     isDone = false;
-    constructor(name) {
+    constructor(name, id, isDone, list) {
         this.name = name;
         this.todoList = [];
         this.id = Project.id++;
+        if(id !== undefined){
+            this.todoList = list;
+            this.id = id;
+            this.isDone = isDone;
+        }
     }
     addTodo(todoItem) {
         if (!todoItem instanceof TodoItem) {
@@ -42,7 +53,6 @@ class Project {
         this.todoList.push(todoItem);
         return 1;
     }
-    
     removeTodo(todoItem) {
         this.todoList.splice(this.todoList.indexOf(todoItem), 1);
     }
@@ -52,6 +62,7 @@ class Project {
                 return false;
             }
         }
+        this.isDone = true;
         return true;
     }
 }
@@ -64,10 +75,31 @@ class ProjectList {
             throw new Error('Unexpected item.');
         }
         this.projectList.push(project);
-        return 1;
     }
     remove(project) {
         this.projectList.splice(this.projectList.indexOf(project), 1);
+    }
+    getFromLocalStorage() {
+        if (localStorage.length !== 0) {
+            let projectArr = JSON.parse(localStorage.getItem('projectList'));
+            this.projectList = [];
+            for (let projectFromStorage of projectArr) {
+                let project = new Project(
+                    projectFromStorage.name,
+                    projectFromStorage.id,
+                    projectFromStorage.isDone,
+                    projectFromStorage.list.map(todo => new TodoItem(
+                        todo.title, 
+                        todo.desc, 
+                        todo.dueDate, 
+                        todo.priority, 
+                        todo.id, 
+                        todo.isComplete
+                    ))
+                );
+                this.projectList.push(project); 
+            }
+        }
     }
 }
 
@@ -101,9 +133,48 @@ const ScreenController = (function () {
     let activeTodo = null;
     const projects = new ProjectList();
 
-    seedHelper(projects);
+    
+    
+    console.log(projects.projectList.map((project) => {
+        return {
+        "id": project.id,
+        "name": project.name,
+        "isDone": project.isDone,
+        "list": project.todoList.map((todo) => {
+            return {
+                "id": todo.id,
+                "isComplete": todo.isComplete,
+                "title": todo.title,
+                "desc": todo.desc,
+                "dueDate": todo.dueDate,
+                "priority": todo.priority,
+            }
+        }),
+        }
+    }));
+    window.addEventListener('beforeunload', () => {
+        localStorage.setItem('projectList', JSON.stringify(projects.projectList.map((project) => {
+            return {
+                "id": project.id,
+                "name": project.name,
+                "isDone": project.isDone,
+                "list": project.todoList.map((todo) => {
+                    return {
+                        "id": todo.id,
+                        "isComplete": todo.isComplete,
+                        "title": todo.title,
+                        "desc": todo.desc,
+                        "dueDate": todo.dueDate,
+                        "priority": todo.priority,
+                    }
+                })
+            };
+        })));
+    });
+    window.addEventListener('DOMContentLoaded', () => {
+        projects.getFromLocalStorage();
+    })
     displayProjects();
-
     addBtn.addEventListener('click', () => {
         dialog.showModal();
     })
