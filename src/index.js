@@ -7,7 +7,6 @@ import redCircle from './assets/priority/red-circle-svgrepo-com.svg'
 import deleteBtnImg from './assets/delete-3-svgrepo-com.svg'
 import editBtnImg from './assets/edit-svgrepo-com.svg'
 
-localStorage.clear();
 class TodoItem {
     static id = 0;
     isComplete = false;
@@ -68,7 +67,7 @@ class Project {
 }
 class ProjectList {
     constructor() {
-        this.projectList = [new Project("Initial list")];
+        this.projectList = [];
     }
     addProject(project) {
         if (!project instanceof Project) {
@@ -82,7 +81,6 @@ class ProjectList {
     getFromLocalStorage() {
         if (localStorage.length !== 0) {
             let projectArr = JSON.parse(localStorage.getItem('projectList'));
-            this.projectList = [];
             for (let projectFromStorage of projectArr) {
                 let project = new Project(
                     projectFromStorage.name,
@@ -99,6 +97,9 @@ class ProjectList {
                 );
                 this.projectList.push(project); 
             }
+        }
+        else{
+            this.projectList = [new Project("Initial list")];
         }
     }
 }
@@ -133,26 +134,8 @@ const ScreenController = (function () {
     let activeTodo = null;
     const projects = new ProjectList();
 
-    
-    
-    console.log(projects.projectList.map((project) => {
-        return {
-        "id": project.id,
-        "name": project.name,
-        "isDone": project.isDone,
-        "list": project.todoList.map((todo) => {
-            return {
-                "id": todo.id,
-                "isComplete": todo.isComplete,
-                "title": todo.title,
-                "desc": todo.desc,
-                "dueDate": todo.dueDate,
-                "priority": todo.priority,
-            }
-        }),
-        }
-    }));
     window.addEventListener('beforeunload', () => {
+        
         localStorage.setItem('projectList', JSON.stringify(projects.projectList.map((project) => {
             return {
                 "id": project.id,
@@ -173,8 +156,8 @@ const ScreenController = (function () {
     });
     window.addEventListener('DOMContentLoaded', () => {
         projects.getFromLocalStorage();
+        displayProjects();
     })
-    displayProjects();
     addBtn.addEventListener('click', () => {
         dialog.showModal();
     })
@@ -312,8 +295,10 @@ const ScreenController = (function () {
         button.dataset.id = project.id;
 
         button.addEventListener('click', () => {
+            document.querySelector(`[data-id = "${activeProject.id}"]`).classList.remove('active-project');
             activeProject = project;
             displayActiveProject();
+            button.classList.add('active-project');
         });
         button.classList.add('list-btn');
         button.textContent = project.name;
@@ -358,5 +343,6 @@ const ScreenController = (function () {
         for (let project of projects.projectList) {
             createProjectCard(project);
         }
+        document.querySelector(`[data-id = "${activeProject.id}"]`).classList.add('active-project');
     }
 })();
