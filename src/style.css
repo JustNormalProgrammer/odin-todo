@@ -186,7 +186,8 @@ main{
     border-radius: 8px;
 }
 .todo-item-darken{
-    filter: brightness(55%);
+    filter: brightness(85%);
+    background-color: rgba(59, 223, 59, 0.644);
 }
 .todo-info{
     margin-right: auto;
