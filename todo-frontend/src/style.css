@@ -188,6 +188,7 @@ main{
 .todo-item-darken{
     filter: brightness(85%);
     background-color: rgba(59, 223, 59, 0.644);
+    opacity: 0.85;
 }
 .todo-info{
     margin-right: auto;

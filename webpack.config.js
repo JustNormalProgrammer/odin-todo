@@ -3,19 +3,19 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 module.exports = {
     mode: 'development',
-    entry: './src/index.js',
+    entry: './todo-frontend/src/index.js',
     output: {
         filename: 'main.js',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'todo-frontend/dist'),
         clean: true,
     },
     devtool: "eval-source-map",
     devServer: {
-        watchFiles: ["./src/template.html"],
+        watchFiles: ["./todo-frontend/src/template.html"],
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './src/template.html',
+            template: './todo-frontend/src/template.html',
         })
     ],
     module: {
