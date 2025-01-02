@@ -14,7 +14,7 @@ class TodoItem {
     this.id = TodoItem.id++;
     this.title = title;
     this.desc = desc;
-    this.dueDate = dueDate;
+    this.dueDate = new Date(dueDate);
     this.priority = priority;
     if (id !== undefined) {
       this.id = id;
@@ -86,16 +86,16 @@ class ProjectList {
       for (let projectFromBackend of projectArr) {
         let project = new Project(
           projectFromBackend.name,
-          projectFromBackend.id,
+          projectFromBackend.key,
           projectFromBackend.isDone,
-          projectFromBackend.list?.map(
+          projectFromBackend.todoList?.map(
             (todo) =>
               new TodoItem(
                 todo.title,
                 todo.desc,
                 todo.dueDate,
                 todo.priority,
-                todo.id,
+                todo.key,
                 todo.isComplete
               )
           )
@@ -109,27 +109,26 @@ class ProjectList {
 
   async saveToBackend() {
     try {
-      const content = JSON.stringify(
-        this.projectList.map((project) => ({
-          key: project.id,
-          name: project.name,
-          isDone: project.isDone,
-          list: project.todoList.map((todo) => ({
-            key: todo.id,
-            isComplete: todo.isComplete,
-            title: todo.title,
-            desc: todo.desc,
-            dueDate: todo.dueDate,
-            priority: todo.priority,
-          })),
-        }))
-      )
+      const content = this.projectList.map((project) => ({
+        key: project.id,
+        name: project.name,
+        isDone: project.isDone,
+        todoList: project.todoList.map((todo) => ({
+          key: todo.id,
+          title: todo.title,
+          desc: todo.desc,
+          dueDate: todo.dueDate.toISOString(),
+          priority: todo.priority,
+          isComplete: todo.isComplete,
+        })),
+      }));
+
       await fetch("http://localhost:3000/api/todos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: content,
+        body: JSON.stringify(content),
       });
       console.log(content);
     } catch (error) {
@@ -308,7 +307,7 @@ const ScreenController = (function () {
     main.appendChild(delButton);
   }
   function displayProjectStatus(project) {
-    const projectButton = document.querySelector(`[data-id = "${project.key}"]`);
+    const projectButton = document.querySelector(`[data-id = "${project.id}"]`);
     let isDone = project.getStatus();
     projectButton.classList.remove("list-btn-done", "list-btn-todo");
     isDone
@@ -318,10 +317,10 @@ const ScreenController = (function () {
   function createProjectCard(project) {
     const li = document.createElement("li");
     const button = document.createElement("button");
-    button.dataset.id = project.key;
+    button.dataset.id = project.id;
 
     button.addEventListener("click", () => {
-      let activeProjectNode = document.querySelector(`[data-id = "${activeProject.key}"]`);
+      let activeProjectNode = document.querySelector(`[data-id = "${activeProject?.id}"]`);
       if(activeProjectNode){
         activeProjectNode.classList.remove("active-project");
       }
@@ -373,7 +372,7 @@ const ScreenController = (function () {
       createProjectCard(project);
     }
     document
-      .querySelector(`[data-id = "${activeProject.key}"]`)
+      .querySelector(`[data-id = "${activeProject.id}"]`)
       .classList.add("active-project");
   }
 })();

@@ -1,7 +1,7 @@
 const express = require("express");
 const Project = require("../models/project");
 const Todo = require("../models/todo");
-const todo = require("../models/todo");
+
 
 const router = express.Router();
 
@@ -20,37 +20,41 @@ router.get("/todos", async (req, res) => {
 router.post("/todos", async (req, res) => {
   try {
     const projectList = req.body;
-    console.log(projectList)
+    console.log("body:", JSON.stringify(projectList, null, 2));
+    
     // Clear existing data (optional)
     await Project.deleteMany({});
     await Todo.deleteMany({});
+    
     // Save new data
     for (let projectData of projectList) {
       const todoList = [];
-      for(let todoData of projectList.list){
-        const todo  = new Todo({
+      for (let todoData of projectData.todoList) { // Poprawka: użycie projectData.todoList
+        const todo = new Todo({
+          key: todoData.key,
           title: todoData.title,
           desc: todoData.desc,
           dueDate: todoData.dueDate,
           priority: todoData.priority,
-          isComplete: todoData.isComplete
+          isComplete: todoData.isComplete,
         });
+        await todo.save(); // Zapisanie każdego zadania
+        todoList.push(todo); // Dodanie do listy
       }
-      await todo.save();
-      todoList.push(todo);
 
       const project = new Project({
+        key: projectData.key,
         name: projectData.name,
         isDone: projectData.isDone,
-        todoList: todoList,
+        todoList: todoList, // Dodanie zadań do projektu
       });
 
-      await project.save();
-      todoList=[];
+      await project.save(); // Zapisanie projektu
     }
-    
+
     res.status(200).json({ message: "Projects saved successfully" });
   } catch (error) {
+    console.error("Error saving projects:", error);
     res.status(500).json({ error: "Error saving projects" });
   }
 });
