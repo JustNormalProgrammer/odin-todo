@@ -275,6 +275,9 @@ input[type="checkbox"]{
     align-items: center;
     width: 100%;
 }
+.card-btn-group{
+    display: flex;
+}
 .card-btn-group button{
     width: min-content;
     border: none;
