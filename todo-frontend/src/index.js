@@ -328,7 +328,7 @@ const ScreenController = (function () {
       displayActiveProject();
       button.classList.add("active-project");
     });
-    button.classList.add("list-btn");
+    button.classList.add("list-btn", "list-btn-done");
     button.textContent = project.name;
     li.appendChild(button);
     ul.appendChild(li);
