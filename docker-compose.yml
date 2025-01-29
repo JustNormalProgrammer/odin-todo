@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: todo-mongodb
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build:
+      context: ./todo-backend
+    container_name: todo-backend
+    ports:
+      - '3000:3000'
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/todo
+    depends_on:
+      - mongodb
+
+  frontend:
+    build:
+      context: ./todo-frontend
+    container_name: todo-frontend
+    ports:
+      - '8080:8080'
+    environment:
+      - BACKEND_URL=http://todo-backend:3000
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:
